@@ -45,7 +45,7 @@ def define_weights(criteria_list):
     weights = {}
     for criterion in criteria_list:
         weight = float(
-            input(f"Please assign a weight (1-5) for {criterion}: "))
+            input(f"Please assign a weight (1-5) for {criterion} (1 being the least important weight and 5 being the most important weight): "))
         weights[criterion] = weight
 
     labels_with_weights = [
