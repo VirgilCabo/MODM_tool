@@ -6,7 +6,7 @@ from saving_results_function import prompt_to_save_results
 
 
 decision_matrix, data_filename, weights, normalized_weights, beneficial_criteria, non_beneficial_criteria = gathering_data(
-    'data_input/mock2_data.xlsx')
+    'C:/Users/Virgi/OneDrive/Bureau/MODM_tool_project/TOPSIS/data_input/mock2_data.xlsx')
 
 ranked_alternatives, ranks, weighted_normalized_matrix, S = main_data_processing(
     decision_matrix, normalized_weights, beneficial_criteria)
@@ -34,4 +34,4 @@ results_visualization(
 
 sensitivity_results = sens.run_sensitivity_analysis(decision_matrix, weight_combinations, beneficial_criteria)
 
-print(sensitivity_results)"""
+print(sensitivity_results)bite"""
