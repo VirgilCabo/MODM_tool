@@ -35,3 +35,5 @@ weight_combinations = sens.get_weight_combinations(normalized_weights)
 sensitivity_results = sens.run_sensitivity_analysis(decision_matrix, weight_combinations, beneficial_criteria)
 
 print(sensitivity_results)
+
+print("hello")
