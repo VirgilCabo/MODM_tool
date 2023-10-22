@@ -3,6 +3,8 @@ import pandas as pd
 import itertools
 import random
 import matplotlib.pyplot as plt
+from TOPSIS_main_data_processing import main_data_processing
+
 
 def get_user_uncertainties(initial_weights):
     uncertainties = {}
@@ -51,7 +53,7 @@ def sample_combinations(all_random_weights, num_samples=1000):
 
 
 def efficient_sample_combinations(all_random_weights, num_samples=1000):
-    sampled_dicts = []
+    weight_sets = []
     
     # List of criteria
     criteria = list(all_random_weights.keys())
@@ -62,9 +64,22 @@ def efficient_sample_combinations(all_random_weights, num_samples=1000):
         
         # Combine the selected weights into a dictionary
         weight_dict = dict(zip(criteria, sampled_weights))
-        sampled_dicts.append(weight_dict)
+        weight_sets.append(weight_dict)
     
-    return sampled_dicts
+    return weight_sets
+
+
+def normalize_weight_sets(weight_sets):
+    # Normalize the weights
+    normalized_weight_sets = []
+    for weights in weight_sets:
+        total_weight = sum(weights.values())
+        normalized_weights = {
+            criterion: weight /
+            total_weight for criterion,
+            weight in weights.items()}
+        normalized_weight_sets.append(normalized_weights)
+    return normalized_weight_sets
 
 
 def plot_histogram(weights, criterion_name):
@@ -76,18 +91,47 @@ def plot_histogram(weights, criterion_name):
     plt.show()
 
 
+def run_sensitivity_analysis(decision_matrix, weight_sets, beneficial_criteria):
+    # Initialize an empty DataFrame to store results
+    columns = ['Weight_' + crit for crit in decision_matrix.columns]
+    for alt in decision_matrix.index:
+        columns.append('Score_' + alt)
+        columns.append('Rank_' + alt)
+    results_df = pd.DataFrame(columns=columns)
+
+    # Iterate over weight combinations
+    for weights in weight_sets:
+        ranked_alternatives, ranks, weighted_normalized_matrix, S = main_data_processing(decision_matrix, weights, beneficial_criteria)
+
+        # Prepare a row to append to the results DataFrame
+        row_data = list(weights.values())  # Start with the weight combination
+        for alt in decision_matrix.index:
+            row_data.append(S[alt])
+            row_data.append(ranks[alt])
+        
+        # Append the row to the results DataFrame
+        results_df.loc[len(results_df)] = row_data
+    
+    return results_df
+
+
+def generate_weight_sets(initial_weights, num_samples, num_sets):
+    uncertainties = get_user_uncertainties(initial_weights)
+    all_random_weights = generate_all_random_weights(initial_weights, uncertainties, num_samples)
+    weight_sets = efficient_sample_combinations(all_random_weights, num_sets)
+    normalized_weight_sets = normalize_weight_sets(weight_sets)
+    return normalized_weight_sets
+
+
 initial_weights = {
     'C1' : 1,
     'C2' : 2,
     'C3' : 3
-
 }
-uncertainties = get_user_uncertainties(initial_weights)
-all_random_weights = generate_all_random_weights(initial_weights, uncertainties, num_samples=10000)
-print(all_random_weights)
-sampled_dicts = efficient_sample_combinations(all_random_weights, num_samples=10000)
-print(sampled_dicts)
-plot_histogram(all_random_weights['C1'], 'C1')
+
+#plot_histogram(all_random_weights['C1'], 'C1')
+normalized_weight_sets = generate_weight_sets(initial_weights, num_samples=100000, num_sets=100000) 
+print(normalized_weight_sets)
 
 
 
