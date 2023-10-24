@@ -139,32 +139,12 @@ def assess_reliability(S, num_sets, results_df):
     count = 0
     total_simulations = num_sets
     initial_best_solution = S.idxmax()
-
     rank_list_initial_best = results_df[f'Rank_{initial_best_solution}'].tolist()
 
     for rank in rank_list_initial_best:
         # Determine the best solution for this simulation
         if rank == 1.0:
             count += 1
-
-    reliability_percentage = (count / total_simulations) * 100
+    reliability_percentage = round((count / total_simulations) * 100, 2)
     return reliability_percentage
-
-
-
-
-""" initial_weights = {
-    'C1' : 1,
-    'C2' : 2,
-    'C3' : 3
-}
-
-#plot_histogram(all_random_weights['C1'], 'C1')
-normalized_weight_sets = generate_weight_sets(initial_weights, num_sample=100, num_sets=100) 
-print(normalized_weight_sets) """
-
-
-
-
-
 
