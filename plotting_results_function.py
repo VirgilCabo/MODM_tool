@@ -48,7 +48,7 @@ def plot_bar_chart(scores, weights, user_input, directory):
     plt.grid(axis='y')
     if user_input == 'yes':
         plt.savefig(os.path.join(directory, 'bar_chart.png'), dpi=500)
-    weights_text = "Criteria weights (1-5):\n\n" + "\n".join(
+    weights_text = "Criteria weights (1-10):\n\n" + "\n".join(
         [f"{criterion}: {int(weight)}" for criterion, weight in weights.items()])
     # Add the text box to the plot
     plt.text(
@@ -116,7 +116,7 @@ def plot_spider_chart(matrix, weights, title, decision_matrix, user_input, direc
     plt.legend(loc='upper left', bbox_to_anchor=(-0.35, 1.1))
     if title == 'Spider Chart of Alternatives with weighting':
         # Create a string with the criteria and their weights
-        weights_text = "Criteria weights (1-5):\n\n" + "\n".join(
+        weights_text = "Criteria weights (1-10):\n\n" + "\n".join(
             [f"{criterion}: {int(weight)}" for criterion, weight in weights.items()])
         # Add the text box to the plot
         plt.figtext(

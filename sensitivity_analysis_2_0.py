@@ -9,7 +9,7 @@ from TOPSIS_main_data_processing import main_data_processing
 def get_user_uncertainties(initial_weights):
     uncertainties = {}
     for criterion, weight in initial_weights.items():
-        print(f"Initial weight for {criterion}: {weight}")
+        print(f"Initial weight for {criterion}: {int(weight)}")
         lower_bound = float(input(f"Enter the lower bound of your confidence interval for {criterion}: "))
         upper_bound = float(input(f"Enter the upper bound of your confidence interval for {criterion}: "))
         
@@ -107,7 +107,7 @@ def run_sensitivity_analysis(decision_matrix, weight_sets, beneficial_criteria):
         row_data = list(weights.values())  # Start with the weight combination
         for alt in decision_matrix.index:
             row_data.append(S[alt])
-            row_data.append(ranks[alt])
+            row_data.append(int(ranks[alt]))
         
         # Append the row to the results DataFrame
         results_df.loc[len(results_df)] = row_data
@@ -120,18 +120,48 @@ def generate_weight_sets(initial_weights, num_samples, num_sets):
     all_random_weights = generate_all_random_weights(initial_weights, uncertainties, num_samples)
     weight_sets = efficient_sample_combinations(all_random_weights, num_sets)
     normalized_weight_sets = normalize_weight_sets(weight_sets)
-    return normalized_weight_sets
+    return normalized_weight_sets, num_sets
 
 
-initial_weights = {
+def assess_reliability(S, num_sets, results_df):
+    """
+    Assess the reliability of the initial best solution based on simulation results.
+
+    Parameters:
+    - initial_best_solution: The best solution from the initial run.
+    - simulation_results: A list of dictionaries where each dictionary represents the results of a simulation. 
+                          The key is the alternative, and the value is its score.
+
+    Returns:
+    - reliability_percentage: The percentage of times the initial best solution remains the best solution in the simulations.
+    """
+    
+    count = 0
+    total_simulations = num_sets
+    initial_best_solution = S.idxmax()
+
+    rank_list_initial_best = results_df[f'Rank_{initial_best_solution}'].tolist()
+
+    for rank in rank_list_initial_best:
+        # Determine the best solution for this simulation
+        if rank == 1.0:
+            count += 1
+
+    reliability_percentage = (count / total_simulations) * 100
+    return reliability_percentage
+
+
+
+
+""" initial_weights = {
     'C1' : 1,
     'C2' : 2,
     'C3' : 3
 }
 
 #plot_histogram(all_random_weights['C1'], 'C1')
-normalized_weight_sets = generate_weight_sets(initial_weights, num_samples=100000, num_sets=100000) 
-print(normalized_weight_sets)
+normalized_weight_sets = generate_weight_sets(initial_weights, num_sample=100, num_sets=100) 
+print(normalized_weight_sets) """
 
 
 

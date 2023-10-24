@@ -1,4 +1,4 @@
-import sensitivity_analysis_1_0 as sens
+import sensitivity_analysis_2_0 as sens
 from TOPSIS_main_data_processing import main_data_processing
 from plotting_results_function import results_visualization
 from gathering_data_function import gathering_data
@@ -30,8 +30,14 @@ results_visualization(
     directory,
     decision_matrix)
 
-weight_combinations = sens.get_weight_combinations(normalized_weights)
+normalized_weight_sets, num_sets = sens.generate_weight_sets(weights, num_samples=1000, num_sets=1000)
 
-sensitivity_results = sens.run_sensitivity_analysis(decision_matrix, weight_combinations, beneficial_criteria)
+sensitivity_results = sens.run_sensitivity_analysis(decision_matrix, normalized_weight_sets, beneficial_criteria)
 
 print(sensitivity_results)
+
+print(S)
+
+reliability_percentage = sens.assess_reliability(S, num_sets, sensitivity_results)
+
+print(reliability_percentage)
