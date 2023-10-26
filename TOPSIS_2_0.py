@@ -30,10 +30,13 @@ results_visualization(
     directory,
     decision_matrix)
 
-normalized_weight_sets, num_sets = sens.generate_weight_sets(weights, num_samples=10000, num_sets=10000)
+normalized_weight_sets, num_sets = sens.generate_weight_sets(weights, 100000, 1000, 0, 10)
 
-sensitivity_results = sens.run_sensitivity_analysis(decision_matrix, normalized_weight_sets, beneficial_criteria)
+sens_scores_results, sens_ranks_results = sens.run_sensitivity_analysis(decision_matrix, normalized_weight_sets, beneficial_criteria)
 
-reliability_percentage = sens.assess_reliability(S, num_sets, sensitivity_results)
+reliability_percentage = sens.assess_reliability(S, num_sets, sens_ranks_results)
 
+print(sens_scores_results)
+print(sens_ranks_results)
 print(reliability_percentage)
+sens.visualize_sensitivity_results(sens_scores_results)

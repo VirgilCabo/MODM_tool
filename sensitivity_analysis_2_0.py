@@ -3,6 +3,7 @@ import pandas as pd
 import itertools
 import random
 import matplotlib.pyplot as plt
+import seaborn as sns
 from TOPSIS_main_data_processing import main_data_processing
 
 
@@ -19,20 +20,23 @@ def get_user_uncertainties(initial_weights):
     return uncertainties
 
 
-def generate_random_weights_for_criterion(initial_weight, std_dev, num_samples=100):
+def generate_random_weights_for_criterion(initial_weight, std_dev, num_samples ,lower_limit, upper_limit):
     weights = []
     for _ in range(num_samples):
-        weight = -1  # Initialize with a negative value to enter the while loop
-        while weight < 0:  # Keep sampling until we get a non-negative weight
-            weight = np.random.normal(initial_weight, std_dev)
+        weight = np.random.normal(initial_weight, std_dev)
+        while weight < lower_limit or weight > upper_limit:
+            if weight < lower_limit:
+                    weight = lower_limit + (lower_limit - weight)
+            elif weight > upper_limit:
+                    weight = upper_limit - (weight - upper_limit)
         weights.append(weight)
     return weights
 
 
-def generate_all_random_weights(initial_weights, uncertainties, num_samples=100):
+def generate_all_random_weights(initial_weights, uncertainties, num_samples, lower_limit, upper_limit):
     all_random_weights = {}
     for criterion, weight in initial_weights.items():
-        all_random_weights[criterion] = generate_random_weights_for_criterion(weight, uncertainties[criterion], num_samples)
+        all_random_weights[criterion] = generate_random_weights_for_criterion(weight, uncertainties[criterion], num_samples, lower_limit, upper_limit)
     return all_random_weights
 
 
@@ -93,7 +97,7 @@ def plot_histogram(weights, criterion_name):
 
 def run_sensitivity_analysis(decision_matrix, weight_sets, beneficial_criteria):
     # Initialize an empty DataFrame to store results
-    columns = ['Weight_' + crit for crit in decision_matrix.columns]
+    columns = []
     for alt in decision_matrix.index:
         columns.append('Score_' + alt)
         columns.append('Rank_' + alt)
@@ -104,26 +108,34 @@ def run_sensitivity_analysis(decision_matrix, weight_sets, beneficial_criteria):
         ranked_alternatives, ranks, weighted_normalized_matrix, S = main_data_processing(decision_matrix, weights, beneficial_criteria)
 
         # Prepare a row to append to the results DataFrame
-        row_data = list(weights.values())  # Start with the weight combination
+        row_data = []
         for alt in decision_matrix.index:
             row_data.append(S[alt])
             row_data.append(int(ranks[alt]))
         
         # Append the row to the results DataFrame
         results_df.loc[len(results_df)] = row_data
-    
-    return results_df
+
+    # Separate performance scores
+    score_columns = [col for col in results_df.columns if 'Score_' in col]
+    scores_df = results_df[score_columns]
+
+    # Separate ranks
+    rank_columns = [col for col in results_df.columns if 'Rank_' in col]
+    ranks_df = results_df[rank_columns]
+
+    return scores_df, ranks_df
 
 
-def generate_weight_sets(initial_weights, num_samples, num_sets):
+def generate_weight_sets(initial_weights, num_samples, num_sets, lower_limit, upper_limit):
     uncertainties = get_user_uncertainties(initial_weights)
-    all_random_weights = generate_all_random_weights(initial_weights, uncertainties, num_samples)
+    all_random_weights = generate_all_random_weights(initial_weights, uncertainties, num_samples, lower_limit, upper_limit)
     weight_sets = efficient_sample_combinations(all_random_weights, num_sets)
     normalized_weight_sets = normalize_weight_sets(weight_sets)
     return normalized_weight_sets, num_sets
 
 
-def assess_reliability(S, num_sets, results_df):
+def assess_reliability(S, num_sets, ranks_df):
     """
     Assess the reliability of the initial best solution based on simulation results.
 
@@ -139,7 +151,7 @@ def assess_reliability(S, num_sets, results_df):
     count = 0
     total_simulations = num_sets
     initial_best_solution = S.idxmax()
-    rank_list_initial_best = results_df[f'Rank_{initial_best_solution}'].tolist()
+    rank_list_initial_best = ranks_df[f'Rank_{initial_best_solution}'].tolist()
 
     for rank in rank_list_initial_best:
         # Determine the best solution for this simulation
@@ -148,3 +160,26 @@ def assess_reliability(S, num_sets, results_df):
     reliability_percentage = round((count / total_simulations) * 100, 2)
     return reliability_percentage
 
+
+def visualize_sensitivity_results(scores_df):
+    # Transpose the DataFrame so that each row represents an alternative and each column is a performance score from a different weight set
+    transposed_scores__df = scores_df.transpose()
+    # Melt the scores_df to long-form
+    long_form_scores = scores_df.melt(var_name="Alternative", value_name="Performance Score")
+
+    # Create the boxplot
+    sns.boxplot(x="Alternative", y="Performance Score", data=long_form_scores)
+    plt.xticks(rotation=45)  # Rotate x-axis labels for better readability, if needed
+    plt.show()
+
+    """ plt.figure(figsize=(15, 10))  # Set the figure size
+    sns.boxplot(data=transposed_scores_df)
+    plt.title('Distribution of Performance Scores for Each Alternative')
+    plt.xlabel('Alternative')
+    plt.ylabel('Performance Score')
+    plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
+    plt.tight_layout()
+    plt.show() """
+
+
+    
