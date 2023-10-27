@@ -40,11 +40,12 @@ def plot_bar_chart(scores, weights, user_input, directory):
     sorted_scores = scores.sort_values(ascending=False)
 
     # Plot
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(9, 5))
     sorted_scores.plot(kind='bar', color='skyblue')
     plt.title('Performance Scores of Alternatives')
     plt.ylabel('Performance Score')
     plt.xlabel('Alternatives')
+    plt.xticks(rotation=0)
     plt.grid(axis='y')
     if user_input == 'yes':
         plt.savefig(os.path.join(directory, 'bar_chart.png'), dpi=500)
@@ -78,7 +79,7 @@ def plot_spider_chart(matrix, weights, title, decision_matrix, user_input, direc
     angles += angles[:1]
 
     # Set figure & subplot axis
-    plt.figure(figsize=(8, 8))
+    plt.figure(figsize=(7, 7))
     ax = plt.subplot(111, polar=True)
 
     # Draw one alternative per loop
@@ -89,7 +90,7 @@ def plot_spider_chart(matrix, weights, title, decision_matrix, user_input, direc
         ax.fill(angles, values, alpha=0.25)
 
     # Add a title
-    plt.title(title, size=20, y=1.1)
+    plt.title(title, size=20, loc='center')
 
     # Set the first axis on top
     ax.set_theta_offset(math.pi / 2)
@@ -113,7 +114,7 @@ def plot_spider_chart(matrix, weights, title, decision_matrix, user_input, direc
                color="grey",
                size=12)
     plt.ylim(0, max_val)
-    plt.legend(loc='upper left', bbox_to_anchor=(-0.35, 1.1))
+    plt.legend(loc='upper left', bbox_to_anchor=(-0.35, 1))
     if title == 'Spider Chart of Alternatives with weighting':
         # Create a string with the criteria and their weights
         weights_text = "Criteria weights (1-10):\n\n" + "\n".join(

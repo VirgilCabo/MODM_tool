@@ -124,6 +124,9 @@ def run_sensitivity_analysis(decision_matrix, weight_sets, beneficial_criteria):
     rank_columns = [col for col in results_df.columns if 'Rank_' in col]
     ranks_df = results_df[rank_columns]
 
+    scores_df.columns = [alt for alt in decision_matrix.index]
+    ranks_df.columns = [alt for alt in decision_matrix.index]
+
     return scores_df, ranks_df
 
 
@@ -151,7 +154,7 @@ def assess_reliability(S, num_sets, ranks_df):
     count = 0
     total_simulations = num_sets
     initial_best_solution = S.idxmax()
-    rank_list_initial_best = ranks_df[f'Rank_{initial_best_solution}'].tolist()
+    rank_list_initial_best = ranks_df[initial_best_solution].tolist()
 
     for rank in rank_list_initial_best:
         # Determine the best solution for this simulation
@@ -165,21 +168,14 @@ def visualize_sensitivity_results(scores_df):
     # Transpose the DataFrame so that each row represents an alternative and each column is a performance score from a different weight set
     transposed_scores__df = scores_df.transpose()
     # Melt the scores_df to long-form
-    long_form_scores = scores_df.melt(var_name="Alternative", value_name="Performance Score")
+    long_form_scores = scores_df.melt(var_name="Alternatives", value_name="Performance Score")
 
     # Create the boxplot
-    sns.boxplot(x="Alternative", y="Performance Score", data=long_form_scores)
-    plt.xticks(rotation=45)  # Rotate x-axis labels for better readability, if needed
+    sns.boxplot(x="Alternatives", y="Performance Score", data=long_form_scores)
+    plt.title('Distribution of Performance Scores for Each Alternative')
+    plt.xticks(rotation=0)  # Rotate x-axis labels for better readability
     plt.show()
 
-    """ plt.figure(figsize=(15, 10))  # Set the figure size
-    sns.boxplot(data=transposed_scores_df)
-    plt.title('Distribution of Performance Scores for Each Alternative')
-    plt.xlabel('Alternative')
-    plt.ylabel('Performance Score')
-    plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
-    plt.tight_layout()
-    plt.show() """
 
 
     
