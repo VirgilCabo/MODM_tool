@@ -9,7 +9,7 @@ def load_data(file_path):
     # file_path = 'data_input/mock3_data.xlsx'
     global data_filename
     data_filename = os.path.basename(file_path)
-    decision_matrix = pd.read_csv(file_path, index_col=0)
+    decision_matrix = pd.read_excel(file_path, index_col=0)
     print(decision_matrix)
     return decision_matrix, data_filename
 

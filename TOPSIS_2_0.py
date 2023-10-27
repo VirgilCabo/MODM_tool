@@ -6,7 +6,7 @@ from saving_results_function import prompt_to_save_results
 
 
 decision_matrix, data_filename, weights, normalized_weights, beneficial_criteria, non_beneficial_criteria = gathering_data(
-    'C:/Users/Virgi/OneDrive/Bureau/MODM_tool_project/TOPSIS/data_input/mock4_data.csv')
+    'C:/Users/Virgi/OneDrive/Bureau/MODM_tool_project/TOPSIS/data_input/mock3_data.xlsx')
 
 ranked_alternatives, ranks, weighted_normalized_matrix, S = main_data_processing(
     decision_matrix, normalized_weights, beneficial_criteria)
@@ -39,4 +39,5 @@ reliability_percentage = sens.assess_reliability(S, num_sets, sens_ranks_results
 print(sens_scores_results)
 print(sens_ranks_results)
 print(reliability_percentage)
-sens.visualize_sensitivity_results(sens_scores_results)
+sens.boxplot_sensitivity_results(sens_scores_results)
+sens.ridgelineplot_sensitivity_results(sens_scores_results)

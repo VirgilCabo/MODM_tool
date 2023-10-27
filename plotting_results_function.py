@@ -5,6 +5,7 @@ import math
 import re
 import os
 import datetime
+import seaborn as sns
 
 
 def min_max_scaling_for_spider_chart(
@@ -40,8 +41,10 @@ def plot_bar_chart(scores, weights, user_input, directory):
     sorted_scores = scores.sort_values(ascending=False)
 
     # Plot
-    plt.figure(figsize=(9, 5))
-    sorted_scores.plot(kind='bar', color='skyblue')
+    df = sorted_scores.reset_index()
+    df.columns = ['Alternatives', 'Performance Score']
+    colors = sns.color_palette("viridis", len(scores))
+    sns.barplot(x='Alternatives', y='Performance Score', data=df, palette=colors, hue='Alternatives')
     plt.title('Performance Scores of Alternatives')
     plt.ylabel('Performance Score')
     plt.xlabel('Alternatives')

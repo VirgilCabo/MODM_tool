@@ -4,6 +4,9 @@ import itertools
 import random
 import matplotlib.pyplot as plt
 import seaborn as sns
+import sys
+import os
+from joypy import joyplot
 from TOPSIS_main_data_processing import main_data_processing
 
 
@@ -164,18 +167,34 @@ def assess_reliability(S, num_sets, ranks_df):
     return reliability_percentage
 
 
-def visualize_sensitivity_results(scores_df):
+def boxplot_sensitivity_results(scores_df, user_input, directory):
     # Transpose the DataFrame so that each row represents an alternative and each column is a performance score from a different weight set
     transposed_scores__df = scores_df.transpose()
     # Melt the scores_df to long-form
     long_form_scores = scores_df.melt(var_name="Alternatives", value_name="Performance Score")
+    colors = sns.color_palette("viridis", len(scores_df.columns))
 
     # Create the boxplot
-    sns.boxplot(x="Alternatives", y="Performance Score", data=long_form_scores)
+    sns.boxplot(x="Alternatives", y="Performance Score", data=long_form_scores, palette=colors, hue="Alternatives")
     plt.title('Distribution of Performance Scores for Each Alternative')
     plt.xticks(rotation=0)  # Rotate x-axis labels for better readability
     plt.show()
+    if user_input == 'yes':
+        plt.savefig(os.path.join(directory, 'box_plot.png'), dpi=500)
 
 
-
+def ridgelineplot_sensitivity_results(scores_df, user_input, directory):
+    joyplot(
+    data=scores_df,
+    title='Performance Score Distributions for Alternatives',
+    overlap=2,  # Adjust as needed
+    colormap=plt.cm.viridis,  # Choose a colormap
+    grid=True,  # Show grid
+    legend=True,  # Show legend
+    linecolor='k'
+    )
+    plt.xlabel("Performance Score")
+    plt.show()
+    if user_input == 'yes':
+        plt.savefig(os.path.join(directory, 'ridgeline_plot.png'), dpi=500)
     
