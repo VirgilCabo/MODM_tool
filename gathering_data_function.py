@@ -44,8 +44,8 @@ def define_weights(criteria_list):
     # Prompt the user for weights for each criterion
     weights = {}
     for criterion in criteria_list:
-        weight = float(
-            input(f"Please assign a weight (1-10) for {criterion} (1 being the least important weight and 10 being the most important weight): "))
+        weight = float(input(
+            f"Please assign a weight (1-10) for {criterion} (1 being the least important weight and 10 being the most important weight): "))
         weights[criterion] = weight
 
     labels_with_weights = [
@@ -73,9 +73,3 @@ def gathering_data(file_path):
     weights = define_weights(decision_matrix.columns)
     normalized_weights = normalize_weight(weights)
     return decision_matrix, data_filename, weights, normalized_weights, beneficial_criteria, non_beneficial_criteria
-
-
-
-
-
-

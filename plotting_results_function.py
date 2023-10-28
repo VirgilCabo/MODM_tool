@@ -44,17 +44,19 @@ def plot_bar_chart(scores, weights, user_input, directory):
     df = sorted_scores.reset_index()
     df.columns = ['Alternatives', 'Performance Score']
     colors = sns.color_palette("viridis", len(scores))
-    sns.barplot(x='Alternatives', y='Performance Score', data=df, palette=colors, hue='Alternatives')
+    sns.barplot(
+        x='Alternatives',
+        y='Performance Score',
+        data=df,
+        palette=colors,
+        hue='Alternatives')
     plt.title('Performance Scores of Alternatives')
     plt.ylabel('Performance Score')
     plt.xlabel('Alternatives')
-    plt.xticks(rotation=0)
+    plt.xticks(rotation=45)
     plt.grid(axis='y')
-    if user_input == 'yes':
-        plt.savefig(os.path.join(directory, 'bar_chart.png'), dpi=500)
     weights_text = "Criteria weights (1-10):\n\n" + "\n".join(
         [f"{criterion}: {int(weight)}" for criterion, weight in weights.items()])
-    # Add the text box to the plot
     plt.text(
         0.75,
         0.95,
@@ -66,11 +68,24 @@ def plot_bar_chart(scores, weights, user_input, directory):
             boxstyle='round,pad=0.5',
             facecolor='aliceblue',
             edgecolor='black'))
-
+    if user_input == 'yes':
+        plt.tight_layout()
+        plt.savefig(
+            os.path.join(
+                directory,
+                'bar_chart.png'),
+            dpi=500,
+            bbox_inches='tight')
     plt.show()
 
 
-def plot_spider_chart(matrix, weights, title, decision_matrix, user_input, directory):
+def plot_spider_chart(
+        matrix,
+        weights,
+        title,
+        decision_matrix,
+        user_input,
+        directory):
     cleaned_criteria_names = clean_criteria_names(decision_matrix.columns)
     # Number of criteria
     num_vars = len(matrix.columns)
@@ -93,7 +108,7 @@ def plot_spider_chart(matrix, weights, title, decision_matrix, user_input, direc
         ax.fill(angles, values, alpha=0.25)
 
     # Add a title
-    plt.title(title, size=20, loc='center')
+    plt.title(title, size=20, y=1.1)
 
     # Set the first axis on top
     ax.set_theta_offset(math.pi / 2)
@@ -136,7 +151,13 @@ def plot_spider_chart(matrix, weights, title, decision_matrix, user_input, direc
                 edgecolor='black'))
 
     if user_input == 'yes':
-        plt.savefig(os.path.join(directory, title + '.png'), dpi=500)
+        plt.tight_layout()
+        plt.savefig(
+            os.path.join(
+                directory,
+                title + '.png'),
+            dpi=500,
+            bbox_inches='tight')
     plt.show()
 
 

@@ -66,7 +66,7 @@ def ranking(S):
     # Rank the alternatives based on their performance scores
     ranked_alternatives = S.sort_values(ascending=False)
     ranks = S.rank(ascending=False).astype(int)
-    #print(ranks)
+    # print(ranks)
     # print("\nRanked Alternatives:")
     # print(ranked_alternatives)
     return ranked_alternatives, ranks

@@ -5,22 +5,15 @@ import datetime
 import sys
 
 
-def save_results(
+def save_run_results(
+        directory,
         decision_matrix,
         weighted_normalized_matrix,
         scores,
         weights,
         beneficial_criteria,
         non_beneficial_criteria,
-        data_filename,
-        path="C:/Users/Virgi/OneDrive/Bureau/MODM_tool_project/TOPSIS/results"):
-    global directory
-    script_name = os.path.splitext(os.path.basename(sys.argv[0]))[0]
-    # Create a directory with the current date and time, script name and data filename 
-    current_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    directory_name = f"{script_name}_{data_filename}_{current_time}"
-    directory = os.path.join(path, directory_name)
-    os.makedirs(directory, exist_ok=True)
+):
 
     # Save decision matrix
     decision_matrix.to_csv(os.path.join(directory, "decision_matrix.csv"))
@@ -45,42 +38,42 @@ def save_results(
         for criterion in non_beneficial_criteria:
             f.write(f"{criterion}\n")
 
-    print(f"Results saved in {directory}")
+    print(f"Run results saved in {directory}")
+    return
+
+
+def save_sensitivity_results(
+        directory,
+        uncertainties,
+        scores_df,
+        ranks_df,
+        reliability_percentage,
+        initial_best_solution):
+    uncertainties_series = pd.Series(uncertainties)
+    uncertainties_series.to_csv(
+        os.path.join(
+            directory,
+            "sensitivity_uncertainties.csv"))
+
+    scores_df.to_csv(os.path.join(directory, "sensitivity_scores.csv"))
+
+    ranks_df.to_csv(os.path.join(directory, "sensitivity_ranks.csv"))
+
+    with open(os.path.join(directory, "best_solution_reliability.txt"), "w") as f:
+        f.write(
+            f"Initial best solution:\n{initial_best_solution}\n\nReliability percentage (% where the initial best solution remains ranked n°1):\n{reliability_percentage})")
+
+    print(f"Sensitivity analysis results saved in {directory}")
+
+
+def directory_creation(
+        data_filename,
+        path="C:/Users/Virgi/OneDrive/Bureau/MODM_tool_project/TOPSIS/results"):
+    script_name = os.path.splitext(os.path.basename(sys.argv[0]))[0]
+    # Create a directory with the current date and time, script name and data
+    # filename
+    current_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    directory_name = f"{script_name}_{data_filename}_{current_time}"
+    directory = os.path.join(path, directory_name)
+    os.makedirs(directory, exist_ok=True)
     return directory
-
-
-def prompt_to_save_results(
-        decision_matrix,
-        weighted_normalized_matrix,
-        ranked_alternatives,
-        weights,
-        beneficial_criteria,
-        non_beneficial_criteria,
-        data_filename
-):
-    # Ask the user if they want to save the results
-    global user_input
-    user_input = input(
-        "Do you want to save the results? (yes/no): ").strip().lower()
-
-    # If the user's input is 'yes', call the save_results function
-    if user_input == 'yes':
-        directory = save_results(
-            decision_matrix,
-            weighted_normalized_matrix,
-            ranked_alternatives,
-            weights,
-            beneficial_criteria,
-            non_beneficial_criteria,
-            data_filename)
-        print("Results saved successfully!")
-    else:
-        directory = None
-        print("Results not saved.")
-    return user_input, directory
-
-
-
-
-
-
