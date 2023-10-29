@@ -9,10 +9,9 @@ user_input = input(
     "Do you want to save the results of this run? (yes/no): ").strip().lower()
 
 decision_matrix, data_filename, weights, normalized_weights, beneficial_criteria, non_beneficial_criteria = gathering_data(
-    'C:/Users/Virgi/OneDrive/Bureau/MODM_tool_project/TOPSIS/data_input/mock3_data.xlsx')
+    'C:/Users/Virgi/OneDrive/Bureau/MODM_tool_project/TOPSIS/data_input/mock4_data.csv')
 
 directory = None
-
 if user_input == 'yes':
     directory = directory_creation(data_filename)
 
@@ -32,7 +31,6 @@ results_visualization(
 
 user_input2 = input(
     "Do you want to run a sensitivity analysis? (yes/no): ").strip().lower()
-
 if user_input2 == 'yes':
     uncertainties, scores_df, ranks_df, reliability_percentage, initial_best_solution = sensitivity_analysis(
         main_data_processing, weights, 10000, 10000, 0, 10, decision_matrix, beneficial_criteria, S, user_input, directory)

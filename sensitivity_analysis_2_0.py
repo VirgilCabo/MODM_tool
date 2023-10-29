@@ -16,6 +16,7 @@ def get_user_uncertainties(initial_weights):
     uncertainties = {}
     for criterion, weight in initial_weights.items():
         print(f"Initial weight for {criterion}: {int(weight)}")
+    for criterion, weight in initial_weights.items():
         lower_bound = float(
             input(f"Enter the lower bound of your confidence interval for {criterion}: "))
         upper_bound = float(

@@ -9,7 +9,7 @@ def load_data(file_path):
     # file_path = 'data_input/mock3_data.xlsx'
     global data_filename
     data_filename = os.path.basename(file_path)
-    decision_matrix = pd.read_excel(file_path, index_col=0)
+    decision_matrix = pd.read_csv(file_path, index_col=0)
     print(decision_matrix)
     return decision_matrix, data_filename
 
@@ -40,14 +40,28 @@ def define_criteria_nature(criteria_list):
     return beneficial_criteria, non_beneficial_criteria
 
 
+def get_integer_input(prompt_message):
+    while True:
+        try:
+            value = int(input(prompt_message))
+            return value
+        except ValueError:
+            print("Please enter a valid integer.")
+
+
 def define_weights(criteria_list):
     # Prompt the user for weights for each criterion
     weights = {}
     for criterion in criteria_list:
-        weight = float(input(
-            f"Please assign a weight (1-10) for {criterion} (1 being the least important weight and 10 being the most important weight): "))
+        while True:
+            weight = get_integer_input(
+                f"Please assign a weight (1-10) for {criterion} (1 being the least important weight and 10 being the most important weight): ")
+            if weight in list(range(11)):
+                weights[criterion] = weight
+                break
+            else:
+                print("Weight should be an integer between 0 and 10. Please try again.")
         weights[criterion] = weight
-
     labels_with_weights = [
         f"{col} ({weights[col]:.2f})" for col in criteria_list]
     return weights

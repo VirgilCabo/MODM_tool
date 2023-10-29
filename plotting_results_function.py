@@ -97,7 +97,7 @@ def plot_spider_chart(
     angles += angles[:1]
 
     # Set figure & subplot axis
-    plt.figure(figsize=(7, 7))
+    plt.figure(figsize=(5, 5))
     ax = plt.subplot(111, polar=True)
 
     # Draw one alternative per loop
