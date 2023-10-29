@@ -72,7 +72,7 @@ def ranking(S):
     return ranked_alternatives, ranks
 
 
-def main_data_processing(
+def TOPSIS_main_data_processing(
         decision_matrix,
         normalized_weights,
         beneficial_criteria):

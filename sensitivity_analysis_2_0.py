@@ -10,6 +10,7 @@ import time
 from joypy import joyplot
 from tqdm import tqdm
 from TOPSIS_main_data_processing import main_data_processing
+from gathering_data_function import get_integer_input
 
 
 def get_user_uncertainties(initial_weights):
@@ -17,10 +18,20 @@ def get_user_uncertainties(initial_weights):
     for criterion, weight in initial_weights.items():
         print(f"Initial weight for {criterion}: {int(weight)}")
     for criterion, weight in initial_weights.items():
-        lower_bound = float(
-            input(f"Enter the lower bound of your confidence interval for {criterion}: "))
-        upper_bound = float(
-            input(f"Enter the upper bound of your confidence interval for {criterion}: "))
+        while True:
+            lower_bound_input = get_integer_input(f"Enter the lower bound of your confidence interval for {criterion}: ")
+            if lower_bound_input >= 0 and lower_bound_input <= weight:
+                lower_bound = lower_bound_input
+                break
+            else:
+                print(f"The lower bound should be an integer between 0 and {weight}. Please try again.")
+        while True:
+            upper_bound_input = get_integer_input(f"Enter the upper bound of your confidence interval for {criterion}: ")
+            if upper_bound_input >= weight and upper_bound_input <= 10:
+                upper_bound = upper_bound_input
+                break
+            else:
+                print(f"The upper bound should be an integer between {weight} and 10. Please try again.")
 
         # Assuming a 95% confidence interval, we can derive the standard
         # deviation.
@@ -76,13 +87,20 @@ def sample_combinations(all_random_weights, num_samples=1000):
     return sampled_dicts
 
 
-def efficient_sample_combinations(all_random_weights, num_samples=1000):
+def efficient_sample_combinations(all_random_weights):
     weight_sets = []
-
+    while True:
+            num_sets_input = get_integer_input(
+                "Please enter the number of weight sets you wish to generate: ")
+            if num_sets_input <= 1000000:
+                num_sets = num_sets_input
+                break
+            else:
+                print("The number of weight sets is too high, it will result in unnecessary computational effort. Please choose a number of sets below 1 million.")
     # List of criteria
     criteria = list(all_random_weights.keys())
 
-    for _ in range(num_samples):
+    for _ in range(num_sets):
         # Randomly select one weight for each criterion
         sampled_weights = [
             random.choice(
@@ -92,7 +110,7 @@ def efficient_sample_combinations(all_random_weights, num_samples=1000):
         weight_dict = dict(zip(criteria, sampled_weights))
         weight_sets.append(weight_dict)
 
-    return weight_sets
+    return weight_sets, num_sets
 
 
 def normalize_weight_sets(weight_sets):
@@ -160,13 +178,12 @@ def run_sensitivity_analysis(
 def generate_weight_sets(
         initial_weights,
         num_samples,
-        num_sets,
         lower_limit,
         upper_limit):
     uncertainties = get_user_uncertainties(initial_weights)
     all_random_weights = generate_all_random_weights(
         initial_weights, uncertainties, num_samples, lower_limit, upper_limit)
-    weight_sets = efficient_sample_combinations(all_random_weights, num_sets)
+    weight_sets, num_sets = efficient_sample_combinations(all_random_weights)
     normalized_weight_sets = normalize_weight_sets(weight_sets)
     return normalized_weight_sets, num_sets, uncertainties
 
@@ -243,7 +260,6 @@ def sensitivity_analysis(
         function,
         initial_weights,
         num_samples,
-        num_sets,
         lower_limit,
         upper_limit,
         decision_matrix,
@@ -252,7 +268,7 @@ def sensitivity_analysis(
         user_input,
         directory):
     normalized_weight_sets, num_sets, uncertainties = generate_weight_sets(
-        initial_weights, num_samples, num_sets, lower_limit, upper_limit)
+        initial_weights, num_samples, lower_limit, upper_limit)
     scores_df, ranks_df = run_sensitivity_analysis(
         function, decision_matrix, normalized_weight_sets, beneficial_criteria)
     reliability_percentage, initial_best_solution = assess_reliability(
