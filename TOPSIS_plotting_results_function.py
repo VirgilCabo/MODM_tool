@@ -36,7 +36,7 @@ def clean_criteria_names(criteria):
     return cleaned
 
 
-def plot_bar_chart(scores, weights, user_input, directory):
+def plot_bar_chart_topsis(scores, weights, user_input, directory):
     # Sort scores for better visualization
     sorted_scores = scores.sort_values(ascending=False)
 
@@ -161,7 +161,7 @@ def plot_spider_chart(
     plt.show()
 
 
-def results_visualization(
+def results_visualization_topsis(
         ranked_alternatives,
         weighted_normalized_matrix,
         beneficial_criteria,
@@ -175,7 +175,7 @@ def results_visualization(
     print(ranked_alternatives)
     scaled_matrix, weighted_scaled_matrix = min_max_scaling_for_spider_chart(
         weighted_normalized_matrix, beneficial_criteria, normalized_weights)
-    plot_bar_chart(S, weights, user_input, directory)
+    plot_bar_chart_topsis(S, weights, user_input, directory)
     plot_spider_chart(
         scaled_matrix,
         weights,
