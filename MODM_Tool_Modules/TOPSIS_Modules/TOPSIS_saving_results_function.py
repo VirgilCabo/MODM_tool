@@ -68,7 +68,7 @@ def save_sensitivity_results(
 
 def directory_creation(
         data_filename,
-        path="C:/Users/Virgi/OneDrive/Bureau/MODM_tool_project/TOPSIS/results"):
+        path="C:/Users/Virgi/OneDrive/Bureau/MODM_tool_project/Tool/Data/results/TOPSIS"):
     script_name = os.path.splitext(os.path.basename(sys.argv[0]))[0]
     # Create a directory with the current date and time, script name and data
     # filename

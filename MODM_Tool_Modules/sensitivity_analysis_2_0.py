@@ -4,13 +4,10 @@ import itertools
 import random
 import matplotlib.pyplot as plt
 import seaborn as sns
-import sys
 import os
-import time
 from joypy import joyplot
 from tqdm import tqdm
-from TOPSIS_main_data_processing import TOPSIS_main_data_processing
-from gathering_data_function import get_integer_input
+from MODM_Tool_Modules.gathering_data_function import get_integer_input
 
 
 def get_user_uncertainties(initial_weights):
