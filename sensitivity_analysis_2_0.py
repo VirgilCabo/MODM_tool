@@ -9,7 +9,7 @@ import os
 import time
 from joypy import joyplot
 from tqdm import tqdm
-from TOPSIS_main_data_processing import main_data_processing
+from TOPSIS_main_data_processing import TOPSIS_main_data_processing
 from gathering_data_function import get_integer_input
 
 
