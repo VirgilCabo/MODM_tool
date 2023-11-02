@@ -7,7 +7,7 @@ import sys
 def save_run_results(
         directory,
         decision_matrix,
-        weighted_normalized_matrix,
+        preference_functions,
         net_flows,
         weights,
         beneficial_criteria,
@@ -17,9 +17,9 @@ def save_run_results(
     # Save decision matrix
     decision_matrix.to_csv(os.path.join(directory, "decision_matrix.csv"))
 
-    # Save weighted normalized matrix
-    weighted_normalized_matrix.to_csv(os.path.join(
-        directory, "weighted_normalized_matrix.csv"))
+    preference_functions_series = pd.Series(preference_functions)
+    preference_functions_series.to_csv(os.path.join(
+        directory, "preference_functions.csv"))
 
     # Save scores
     net_flows.to_csv(os.path.join(directory, "net_flows.csv"))

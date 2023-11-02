@@ -214,10 +214,9 @@ def calculate_flows(matrix_df):
     return net_flows, ranked_alternatives, ranks
 
 
-def PROMETHEE_data_processing(decision_matrix, beneficial_criteria, normalized_weights):
+def PROMETHEE_data_processing(decision_matrix, beneficial_criteria, normalized_weights, preference_functions):
     normalized_matrix = min_max_normalization(decision_matrix, beneficial_criteria)
     d_values_df = compute_d_values(normalized_matrix)
-    preference_functions = define_preference_functions(decision_matrix)
     preference_values_df = compute_preference_values(d_values_df, preference_functions)
     global_preference_values_serie = compute_global_preference_values(preference_values_df, normalized_weights, decision_matrix)
     matrix_df = series_to_matrix(global_preference_values_serie, decision_matrix)

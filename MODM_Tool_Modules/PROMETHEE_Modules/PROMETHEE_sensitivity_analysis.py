@@ -136,7 +136,8 @@ def run_sensitivity_analysis(
         function,
         decision_matrix,
         weight_sets,
-        beneficial_criteria):
+        beneficial_criteria,
+        preference_functions):
     # Initialize an empty DataFrame to store results
     columns = []
     for alt in decision_matrix.index:
@@ -147,7 +148,7 @@ def run_sensitivity_analysis(
     # Iterate over weight combinations
     for weights in tqdm(weight_sets, colour='green'):
         ranked_alternatives, ranks, weighted_normalized_matrix, S = function(
-            decision_matrix, weights, beneficial_criteria)
+            decision_matrix, weights, beneficial_criteria, preference_functions)
 
         # Prepare a row to append to the results DataFrame
         row_data = []
@@ -263,11 +264,12 @@ def sensitivity_analysis(
         beneficial_criteria,
         S,
         user_input,
-        directory):
+        directory,
+        preference_functions):
     normalized_weight_sets, num_sets, uncertainties = generate_weight_sets(
         initial_weights, num_samples, lower_limit, upper_limit)
     scores_df, ranks_df = run_sensitivity_analysis(
-        function, decision_matrix, normalized_weight_sets, beneficial_criteria)
+        function, decision_matrix, normalized_weight_sets, beneficial_criteria,preference_functions)
     reliability_percentage, initial_best_solution = assess_reliability(
         S, num_sets, ranks_df)
     boxplot_sensitivity_results(scores_df, user_input, directory)
