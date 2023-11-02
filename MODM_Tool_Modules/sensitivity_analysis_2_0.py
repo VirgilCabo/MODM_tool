@@ -159,7 +159,7 @@ def run_sensitivity_analysis(
         results_df.loc[len(results_df)] = row_data
 
     # Separate performance scores
-    score_columns = [col for col in results_df.columns if 'Net_flow_' in col]
+    score_columns = [col for col in results_df.columns if 'Score_' in col]
     scores_df = results_df[score_columns]
 
     # Separate ranks

@@ -141,14 +141,14 @@ def run_sensitivity_analysis(
     # Initialize an empty DataFrame to store results
     columns = []
     for alt in decision_matrix.index:
-        columns.append('Score_' + alt)
+        columns.append('Net_Flow_' + alt)
         columns.append('Rank_' + alt)
     results_df = pd.DataFrame(columns=columns)
 
     # Iterate over weight combinations
     for weights in tqdm(weight_sets, colour='green'):
-        ranked_alternatives, ranks, weighted_normalized_matrix, S = function(
-            decision_matrix, weights, beneficial_criteria, preference_functions)
+        S, ranked_alternatives, ranks = function(
+            decision_matrix, beneficial_criteria, weights, preference_functions)
 
         # Prepare a row to append to the results DataFrame
         row_data = []
@@ -160,7 +160,7 @@ def run_sensitivity_analysis(
         results_df.loc[len(results_df)] = row_data
 
     # Separate performance scores
-    score_columns = [col for col in results_df.columns if 'Net_flow_' in col]
+    score_columns = [col for col in results_df.columns if 'Net_Flow_' in col]
     scores_df = results_df[score_columns]
 
     # Separate ranks
@@ -221,17 +221,17 @@ def boxplot_sensitivity_results(scores_df, user_input, directory):
     # Melt the scores_df to long-form
     long_form_scores = scores_df.melt(
         var_name="Alternatives",
-        value_name="Performance Score")
+        value_name="Net Outranking Flow")
     colors = sns.color_palette("viridis", len(scores_df.columns))
 
     # Create the boxplot
     sns.boxplot(
         x="Alternatives",
-        y="Performance Score",
+        y="Net Outranking Flow",
         data=long_form_scores,
         palette=colors,
         hue="Alternatives")
-    plt.title('Distribution of Performance Scores for Each Alternative')
+    plt.title('Distribution of Net Outranking Flows for Each Alternative')
     plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
     if user_input == 'yes':
         plt.savefig(os.path.join(directory, 'box_plot.png'), dpi=500)
@@ -241,14 +241,14 @@ def boxplot_sensitivity_results(scores_df, user_input, directory):
 def ridgelineplot_sensitivity_results(scores_df, user_input, directory):
     joyplot(
         data=scores_df,
-        title='Performance Score Distributions for Alternatives',
+        title='Net Outranking Flow Distributions for Alternatives',
         overlap=2,  # Adjust as needed
         colormap=plt.cm.viridis,  # Choose a colormap
         grid=True,  # Show grid
         legend=True,  # Show legend
         linecolor='k'
     )
-    plt.xlabel("Performance Score")
+    plt.xlabel("Net Outranking Flow")
     if user_input == 'yes':
         plt.savefig(os.path.join(directory, 'ridgeline_plot.png'), dpi=500)
     plt.show()
@@ -269,7 +269,7 @@ def sensitivity_analysis(
     normalized_weight_sets, num_sets, uncertainties = generate_weight_sets(
         initial_weights, num_samples, lower_limit, upper_limit)
     scores_df, ranks_df = run_sensitivity_analysis(
-        function, decision_matrix, normalized_weight_sets, beneficial_criteria,preference_functions)
+        function=function, decision_matrix=decision_matrix, weight_sets=normalized_weight_sets, beneficial_criteria=beneficial_criteria, preference_functions=preference_functions)
     reliability_percentage, initial_best_solution = assess_reliability(
         S, num_sets, ranks_df)
     boxplot_sensitivity_results(scores_df, user_input, directory)
