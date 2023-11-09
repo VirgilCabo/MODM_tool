@@ -6,7 +6,7 @@ from MODM_Tool_Modules.TOPSIS_Modules import TOPSIS_saving_results_function as t
 
 
 decision_matrix, data_filename, weights, normalized_weights, beneficial_criteria, non_beneficial_criteria = gt.gathering_data(
-    'C:/Users/Virgi/OneDrive/Bureau/MODM_tool_project/Tool/Data/data_input/mock_data.csv')
+    'C:/Users/Virgi/OneDrive/Bureau/MODM_tool_project/Tool/Data/data_input/mock5_data.csv')
 
 user_input = input(
     "Do you want to save the results of this run? (yes/no): ").strip().lower()

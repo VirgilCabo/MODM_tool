@@ -38,7 +38,7 @@ def determine_ideal_best_and_worst(
     return ideal_best, ideal_worst
 
 
-def calculate_euclidian_distance(
+def calculate_euclidean_distance(
         weighted_normalized_matrix,
         ideal_best,
         ideal_worst):
@@ -81,7 +81,7 @@ def TOPSIS_main_data_processing(
         normalized_matrix, normalized_weights)
     ideal_best, ideal_worst = determine_ideal_best_and_worst(
         weighted_normalized_matrix, beneficial_criteria)
-    D_plus, D_minus = calculate_euclidian_distance(
+    D_plus, D_minus = calculate_euclidean_distance(
         weighted_normalized_matrix, ideal_best, ideal_worst)
     S = calculate_performance_score(D_plus, D_minus)
     ranked_alternatives, ranks = ranking(S)
