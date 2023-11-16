@@ -6,6 +6,8 @@ import re
 import os
 import datetime
 import seaborn as sns
+from matplotlib.colors import Normalize
+from matplotlib.cm import ScalarMappable
 
 
 def min_max_scaling_for_spider_chart(
@@ -43,19 +45,25 @@ def plot_bar_chart_topsis(scores, weights, user_input, directory):
     # Plot
     df = sorted_scores.reset_index()
     df.columns = ['Alternatives', 'Performance Score']
-    colors = sns.color_palette("viridis", len(scores))
-    sns.barplot(
+    order = df['Alternatives'].tolist()
+    norm = plt.Normalize(df['Performance Score'].min(), df['Performance Score'].max())
+    colors = plt.cm.cividis(norm(df['Performance Score']))
+    barplot = sns.barplot(
         x='Alternatives',
         y='Performance Score',
         data=df,
-        palette=colors,
-        hue='Alternatives')
+        palette=list(colors),
+        legend=False,
+        order=order)
+    sm = ScalarMappable(cmap=plt.cm.cividis, norm=norm)
+    sm.set_array([])
+    plt.colorbar(sm, ax=barplot, orientation='vertical')
     plt.title('Performance Scores of Alternatives')
     plt.ylabel('Performance Score')
     plt.xlabel('Alternatives')
-    plt.xticks(rotation=45)
+    plt.xticks(rotation=0)
     plt.grid(axis='y')
-    weights_text = "Criteria weights (1-10):\n\n" + "\n".join(
+    """ weights_text = "Criteria weights (1-10):\n\n" + "\n".join(
         [f"{criterion}: {int(weight)}" for criterion, weight in weights.items()])
     plt.text(
         0.75,
@@ -67,7 +75,7 @@ def plot_bar_chart_topsis(scores, weights, user_input, directory):
         bbox=dict(
             boxstyle='round,pad=0.5',
             facecolor='aliceblue',
-            edgecolor='black'))
+            edgecolor='black')) """
     if user_input == 'yes':
         plt.tight_layout()
         plt.savefig(
@@ -173,10 +181,10 @@ def results_visualization_topsis(
         decision_matrix):
     print("\nRanked Alternatives:")
     print(ranked_alternatives)
-    scaled_matrix, weighted_scaled_matrix = min_max_scaling_for_spider_chart(
-        weighted_normalized_matrix, beneficial_criteria, normalized_weights)
+    """ scaled_matrix, weighted_scaled_matrix = min_max_scaling_for_spider_chart(
+        weighted_normalized_matrix, beneficial_criteria, normalized_weights) """
     plot_bar_chart_topsis(S, weights, user_input, directory)
-    plot_spider_chart(
+    """ plot_spider_chart(
         scaled_matrix,
         weights,
         "Spider Chart of Alternatives without weighting",
@@ -190,3 +198,4 @@ def results_visualization_topsis(
         decision_matrix,
         user_input,
         directory)
+ """

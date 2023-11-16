@@ -141,8 +141,8 @@ def run_sensitivity_analysis(
     # Initialize an empty DataFrame to store results
     columns = []
     for alt in decision_matrix.index:
-        columns.append('Net_Flow_' + alt)
-        columns.append('Rank_' + alt)
+        columns.append('Net_Flow_' + str(alt))
+        columns.append('Rank_' + str(alt))
     results_df = pd.DataFrame(columns=columns)
 
     # Iterate over weight combinations
@@ -243,10 +243,12 @@ def ridgelineplot_sensitivity_results(scores_df, user_input, directory):
         data=scores_df,
         title='Net Outranking Flow Distributions for Alternatives',
         overlap=2,  # Adjust as needed
-        colormap=plt.cm.viridis,  # Choose a colormap
-        grid=True,  # Show grid
+        colormap=plt.cm.tab20b,  # Choose a colormap
+        grid=False,  # Show grid
         legend=True,  # Show legend
-        linecolor='k'
+        linecolor='k',
+        linewidth=0.5,
+        alpha=0.9
     )
     plt.xlabel("Net Outranking Flow")
     if user_input == 'yes':
@@ -272,6 +274,6 @@ def sensitivity_analysis(
         function=function, decision_matrix=decision_matrix, weight_sets=normalized_weight_sets, beneficial_criteria=beneficial_criteria, preference_functions=preference_functions)
     reliability_percentage, initial_best_solution = assess_reliability(
         S, num_sets, ranks_df)
-    boxplot_sensitivity_results(scores_df, user_input, directory)
+    #boxplot_sensitivity_results(scores_df, user_input, directory)
     ridgelineplot_sensitivity_results(scores_df, user_input, directory)
     return uncertainties, scores_df, ranks_df, reliability_percentage, initial_best_solution

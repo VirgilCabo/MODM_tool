@@ -13,7 +13,7 @@ def save_run_results(
         weights,
         beneficial_criteria,
         non_beneficial_criteria,
-):
+    ):
 
     # Save decision matrix
     decision_matrix.to_csv(os.path.join(directory, "decision_matrix.csv"))

@@ -2,6 +2,8 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import os
+from matplotlib.colors import Normalize
+from matplotlib.cm import ScalarMappable
 
 
 def plot_bar_chart_promethee(net_flows, weights, user_input, directory):
@@ -11,19 +13,25 @@ def plot_bar_chart_promethee(net_flows, weights, user_input, directory):
     # Plot
     df = sorted_net_flows.reset_index()
     df.columns = ['Alternatives', 'Net Outranking Flow']
-    colors = sns.color_palette("viridis", len(net_flows))
-    sns.barplot(
+    order = df['Alternatives'].tolist()
+    norm = plt.Normalize(df['Net Outranking Flow'].min(), df['Net Outranking Flow'].max())
+    colors = plt.cm.cividis(norm(df['Net Outranking Flow']))
+    barplot = sns.barplot(
         x='Alternatives',
         y='Net Outranking Flow',
         data=df,
-        palette=colors,
-        hue='Alternatives')
+        palette=list(colors),
+        legend=False,
+        order=order)
+    sm = ScalarMappable(cmap=plt.cm.cividis, norm=norm)
+    sm.set_array([])
+    plt.colorbar(sm, ax=barplot, orientation='vertical')
     plt.title('Net Outranking Flows of Alternatives')
     plt.ylabel('Net Outranking Flow')
     plt.xlabel('Alternatives')
-    plt.xticks(rotation=45)
+    plt.xticks(rotation=0)
     plt.grid(axis='y')
-    weights_text = "Criteria weights (1-10):\n\n" + "\n".join(
+    """ weights_text = "Criteria weights (1-10):\n\n" + "\n".join(
         [f"{criterion}: {int(weight)}" for criterion, weight in weights.items()])
     plt.text(
         0.75,
@@ -35,7 +43,7 @@ def plot_bar_chart_promethee(net_flows, weights, user_input, directory):
         bbox=dict(
             boxstyle='round,pad=0.5',
             facecolor='aliceblue',
-            edgecolor='black'))
+            edgecolor='black')) """
     if user_input == 'yes':
         plt.tight_layout()
         plt.savefig(

@@ -1,4 +1,4 @@
-from MODM_Tool_Modules import sensitivity_analysis_2_0 as sens
+from MODM_Tool_Modules.TOPSIS_Modules import sensitivity_analysis_TOPSIS as sens
 from MODM_Tool_Modules import gathering_data_function as gt
 from MODM_Tool_Modules.TOPSIS_Modules import TOPSIS_main_data_processing as tp_process
 from MODM_Tool_Modules.TOPSIS_Modules import TOPSIS_plotting_results_function as tp_plot
@@ -6,7 +6,7 @@ from MODM_Tool_Modules.TOPSIS_Modules import TOPSIS_saving_results_function as t
 
 
 decision_matrix, data_filename, weights, normalized_weights, beneficial_criteria, non_beneficial_criteria = gt.gathering_data(
-    'C:/Users/Virgi/OneDrive/Bureau/MODM_tool_project/Tool/Data/data_input/mock5_data.csv')
+    'C:/Users/Virgi/OneDrive/Bureau/MODM_tool_project/Tool/Data/data_input/optimal_pareto_points.csv')
 
 user_input = input(
     "Do you want to save the results of this run? (yes/no): ").strip().lower()

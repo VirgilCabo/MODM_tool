@@ -8,6 +8,15 @@ import os
 from joypy import joyplot
 from tqdm import tqdm
 from MODM_Tool_Modules.gathering_data_function import get_integer_input
+""" import rpy2.robjects as robjects
+from rpy2 import situation
+
+r_source = robjects.r['source']
+r_source('C:/Users/Virgi/OneDrive/Bureau/MODM_tool_project/Tool/Scripts/MODM_Tool_Modules/TOPSIS_Modules/ridgeplot_TOPSIS.R')
+
+plot_ridgeline = robjects.r['plot_ridgeline']
+ """
+
 
 
 def get_user_uncertainties(initial_weights):
@@ -140,8 +149,8 @@ def run_sensitivity_analysis(
     # Initialize an empty DataFrame to store results
     columns = []
     for alt in decision_matrix.index:
-        columns.append('Score_' + alt)
-        columns.append('Rank_' + alt)
+        columns.append('Score_' + str(alt))
+        columns.append('Rank_' + str(alt))
     results_df = pd.DataFrame(columns=columns)
 
     # Iterate over weight combinations
@@ -241,11 +250,13 @@ def ridgelineplot_sensitivity_results(scores_df, user_input, directory):
     joyplot(
         data=scores_df,
         title='Performance Score Distributions for Alternatives',
-        overlap=2,  # Adjust as needed
-        colormap=plt.cm.viridis,  # Choose a colormap
-        grid=True,  # Show grid
+        overlap=3,  # Adjust as needed
+        colormap=plt.cm.tab20b,  # Choose a colormap
+        grid=False,  # Show grid
         legend=True,  # Show legend
-        linecolor='k'
+        linecolor='k',
+        linewidth=0.5,
+        alpha=0.9
     )
     plt.xlabel("Performance Score")
     if user_input == 'yes':
@@ -270,6 +281,7 @@ def sensitivity_analysis(
         function, decision_matrix, normalized_weight_sets, beneficial_criteria)
     reliability_percentage, initial_best_solution = assess_reliability(
         S, num_sets, ranks_df)
-    boxplot_sensitivity_results(scores_df, user_input, directory)
+    #boxplot_sensitivity_results(scores_df, user_input, directory)
     ridgelineplot_sensitivity_results(scores_df, user_input, directory)
+    #plot_ridgeline(scores_df, user_input, directory)
     return uncertainties, scores_df, ranks_df, reliability_percentage, initial_best_solution
