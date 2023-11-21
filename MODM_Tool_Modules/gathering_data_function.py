@@ -80,10 +80,55 @@ def normalize_weight(weights):
     return normalized_weights
 
 
+def min_max_normalization(decision_matrix, beneficial_criteria):
+    """
+    Normalize the decision matrix using min-max normalization.
+    
+    Parameters:
+    - decision_matrix: DataFrame containing the raw scores for each alternative and criterion.
+    
+    Returns:
+    - normalized_matrix: DataFrame containing the normalized scores.
+    """
+    normalized_matrix = (decision_matrix - decision_matrix.min()) / (decision_matrix.max() - decision_matrix.min())
+    for criterion in decision_matrix.columns:
+        if criterion not in beneficial_criteria:
+            normalized_matrix[criterion] = 1 - normalized_matrix[criterion]
+    return normalized_matrix
+
+
+def vector_normalization(decision_matrix, beneficial_criteria):
+    # Normalize the decision matrix with vector normalization
+    normalized_matrix = decision_matrix.div(
+        decision_matrix.pow(2).sum(
+            axis=0).pow(0.5), axis=1)
+    for criterion in decision_matrix.columns:
+        if criterion not in beneficial_criteria:
+            normalized_matrix[criterion] = 1 - normalized_matrix[criterion]
+    # print(normalized_matrix)
+    return normalized_matrix
+
+
+def normalization(decision_matrix, beneficial_criteria):
+    response = input(f"What normalization method do you want to use for your dataset?\nEnter 'm' for Min-Max Normalization.\nEnter 'v' for Vector Normalization.\n").lower()
+    while response not in ['m', 'v']:
+        print(
+            "Invalid input. Please enter 'm' or 'v'.")
+        response = input(
+            f"What normalization method do you want to use? ").lower()
+    if response == 'm':
+            normalized_matrix = min_max_normalization(decision_matrix, beneficial_criteria)   
+    elif response == 'v':
+            normalized_matrix = vector_normalization(decision_matrix, beneficial_criteria)
+    print(normalized_matrix)
+    return normalized_matrix
+
+
 def gathering_data(file_path):
     decision_matrix, data_filename = load_data(file_path)
     beneficial_criteria, non_beneficial_criteria = define_criteria_nature(
         decision_matrix.columns)
+    normalized_matrix = normalization(decision_matrix, beneficial_criteria)
     weights = define_weights(decision_matrix.columns)
     normalized_weights = normalize_weight(weights)
-    return decision_matrix, data_filename, weights, normalized_weights, beneficial_criteria, non_beneficial_criteria
+    return decision_matrix, normalized_matrix, data_filename, weights, normalized_weights, beneficial_criteria, non_beneficial_criteria

@@ -8,14 +8,6 @@ import os
 from joypy import joyplot
 from tqdm import tqdm
 from MODM_Tool_Modules.gathering_data_function import get_integer_input
-""" import rpy2.robjects as robjects
-from rpy2 import situation
-
-r_source = robjects.r['source']
-r_source('C:/Users/Virgi/OneDrive/Bureau/MODM_tool_project/Tool/Scripts/MODM_Tool_Modules/TOPSIS_Modules/ridgeplot_TOPSIS.R')
-
-plot_ridgeline = robjects.r['plot_ridgeline']
- """
 
 
 
@@ -145,7 +137,7 @@ def run_sensitivity_analysis(
         function,
         decision_matrix,
         weight_sets,
-        beneficial_criteria):
+        normalized_matrix):
     # Initialize an empty DataFrame to store results
     columns = []
     for alt in decision_matrix.index:
@@ -156,7 +148,7 @@ def run_sensitivity_analysis(
     # Iterate over weight combinations
     for weights in tqdm(weight_sets, colour='green'):
         ranked_alternatives, ranks, weighted_normalized_matrix, S = function(
-            decision_matrix, weights, beneficial_criteria)
+            weights, normalized_matrix)
 
         # Prepare a row to append to the results DataFrame
         row_data = []
@@ -250,7 +242,7 @@ def ridgelineplot_sensitivity_results(scores_df, user_input, directory):
     joyplot(
         data=scores_df,
         title='Performance Score Distributions for Alternatives',
-        overlap=3,  # Adjust as needed
+        overlap=2,  # Adjust as needed
         colormap=plt.cm.tab20b,  # Choose a colormap
         grid=False,  # Show grid
         legend=True,  # Show legend
@@ -271,17 +263,16 @@ def sensitivity_analysis(
         lower_limit,
         upper_limit,
         decision_matrix,
-        beneficial_criteria,
+        normalized_matrix,
         S,
         user_input,
         directory):
     normalized_weight_sets, num_sets, uncertainties = generate_weight_sets(
         initial_weights, num_samples, lower_limit, upper_limit)
     scores_df, ranks_df = run_sensitivity_analysis(
-        function, decision_matrix, normalized_weight_sets, beneficial_criteria)
+        function, decision_matrix, normalized_weight_sets, normalized_matrix)
     reliability_percentage, initial_best_solution = assess_reliability(
         S, num_sets, ranks_df)
     #boxplot_sensitivity_results(scores_df, user_input, directory)
     ridgelineplot_sensitivity_results(scores_df, user_input, directory)
-    #plot_ridgeline(scores_df, user_input, directory)
     return uncertainties, scores_df, ranks_df, reliability_percentage, initial_best_solution

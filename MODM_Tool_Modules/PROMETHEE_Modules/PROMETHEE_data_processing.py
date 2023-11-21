@@ -3,22 +3,6 @@ import numpy as np
 import math
 
 
-def min_max_normalization(decision_matrix, beneficial_criteria):
-    """
-    Normalize the decision matrix using min-max normalization.
-    
-    Parameters:
-    - decision_matrix: DataFrame containing the raw scores for each alternative and criterion.
-    
-    Returns:
-    - normalized_matrix: DataFrame containing the normalized scores.
-    """
-    normalized_matrix = (decision_matrix - decision_matrix.min()) / (decision_matrix.max() - decision_matrix.min())
-    for criterion in decision_matrix.columns:
-        if criterion not in beneficial_criteria:
-            normalized_matrix[criterion] = 1 - normalized_matrix[criterion]
-    return normalized_matrix
-
 
 def usual_preference_function(d):
     """
@@ -214,8 +198,7 @@ def calculate_flows(matrix_df):
     return net_flows, ranked_alternatives, ranks
 
 
-def PROMETHEE_data_processing(decision_matrix, beneficial_criteria, normalized_weights, preference_functions):
-    normalized_matrix = min_max_normalization(decision_matrix, beneficial_criteria)
+def PROMETHEE_data_processing(decision_matrix, normalized_matrix, normalized_weights, preference_functions):
     d_values_df = compute_d_values(normalized_matrix)
     preference_values_df = compute_preference_values(d_values_df, preference_functions)
     global_preference_values_serie = compute_global_preference_values(preference_values_df, normalized_weights, decision_matrix)
