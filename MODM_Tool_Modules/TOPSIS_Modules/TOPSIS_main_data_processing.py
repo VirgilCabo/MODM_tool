@@ -65,4 +65,4 @@ def TOPSIS_main_data_processing(
         weighted_normalized_matrix, ideal_best, ideal_worst)
     S = calculate_performance_score(D_plus, D_minus)
     ranked_alternatives, ranks = ranking(S)
-    return ranked_alternatives, ranks, weighted_normalized_matrix, S
+    return ranked_alternatives, ranks, weighted_normalized_matrix, S, ideal_best, ideal_worst

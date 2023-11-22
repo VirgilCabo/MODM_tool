@@ -6,7 +6,7 @@ from MODM_Tool_Modules.TOPSIS_Modules import TOPSIS_saving_results_function as t
 
 
 decision_matrix, normalized_matrix, data_filename, weights, normalized_weights, beneficial_criteria, non_beneficial_criteria = gt.gathering_data(
-    'C:/Users/Virgi/OneDrive/Bureau/MODM_tool_project/Tool/Data/data_input/optimal_pareto_points.csv')
+    'C:/Users/Virgi/OneDrive/Bureau/MODM_tool_project/Tool/Data/data_input/optimal_pareto_points2.csv')
 
 user_input = input(
     "Do you want to save the results of this run? (yes/no): ").strip().lower()
@@ -14,7 +14,7 @@ directory = None
 if user_input == 'yes':
     directory = tp_save.directory_creation(data_filename)
 
-ranked_alternatives, ranks, weighted_normalized_matrix, S = tp_process.TOPSIS_main_data_processing(
+ranked_alternatives, ranks, weighted_normalized_matrix, S, ideal_best, ideal_worst = tp_process.TOPSIS_main_data_processing(
     normalized_weights, normalized_matrix)
 
 tp_plot.results_visualization_topsis(
@@ -26,7 +26,9 @@ tp_plot.results_visualization_topsis(
     S,
     user_input,
     directory,
-    decision_matrix)
+    decision_matrix,
+    ideal_best,
+    ideal_worst)
 
 user_input2 = input(
     "Do you want to run a sensitivity analysis? (yes/no): ").strip().lower()

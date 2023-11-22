@@ -6,7 +6,7 @@ from MODM_Tool_Modules.PROMETHEE_Modules import PROMETHEE_sensitivity_analysis a
 
 
 decision_matrix, normalized_matrix, data_filename, weights, normalized_weights, beneficial_criteria, non_beneficial_criteria = gt.gathering_data(
-    'C:/Users/Virgi/OneDrive/Bureau/MODM_tool_project/Tool/Data/data_input/optimal_pareto_points.csv')
+    'C:/Users/Virgi/OneDrive/Bureau/MODM_tool_project/Tool/Data/data_input/optimal_pareto_points2.csv')
 
 user_input = input(
     "Do you want to save the results of this run? (yes/no): ").strip().lower()

@@ -147,7 +147,7 @@ def run_sensitivity_analysis(
 
     # Iterate over weight combinations
     for weights in tqdm(weight_sets, colour='green'):
-        ranked_alternatives, ranks, weighted_normalized_matrix, S = function(
+        ranked_alternatives, ranks, weighted_normalized_matrix, S, ideal_best, ideal_worst = function(
             weights, normalized_matrix)
 
         # Prepare a row to append to the results DataFrame
