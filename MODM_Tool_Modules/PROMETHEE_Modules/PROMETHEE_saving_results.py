@@ -46,8 +46,7 @@ def save_sensitivity_results(
         uncertainties,
         net_flows_df,
         ranks_df,
-        reliability_percentage,
-        initial_best_solution):
+        top_serie):
     uncertainties_series = pd.Series(uncertainties)
     uncertainties_series.to_csv(
         os.path.join(
@@ -58,9 +57,7 @@ def save_sensitivity_results(
 
     ranks_df.to_csv(os.path.join(directory, "sensitivity_ranks.csv"))
 
-    with open(os.path.join(directory, "best_solution_reliability.txt"), "w") as f:
-        f.write(
-            f"Initial best solution:\n{initial_best_solution}\n\nReliability percentage (% where the initial best solution remains ranked n°1):\n{reliability_percentage})")
+    top_serie.to_csv(os.path.join(directory, "reliability_percentages.csv"))
 
     print(f"Sensitivity analysis results saved in {directory}")
 
