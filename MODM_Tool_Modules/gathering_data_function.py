@@ -110,17 +110,19 @@ def vector_normalization(decision_matrix, beneficial_criteria):
 
 
 def normalization(decision_matrix, beneficial_criteria):
-    response = input(f"What normalization method do you want to use for your dataset?\nEnter 'm' for Min-Max Normalization.\nEnter 'v' for Vector Normalization.\n").lower()
-    while response not in ['m', 'v']:
+    response = input(f"What normalization method do you want to use for your dataset?\nEnter 'm' for Min-Max Normalization.\nEnter 'v' for Vector Normalization.\nEnter 'n' for no Normalization at all.\n").lower()
+    while response not in ['m', 'v', 'n']:
         print(
-            "Invalid input. Please enter 'm' or 'v'.")
+            "Invalid input. Please enter 'm', 'v' or 'n'.")
         response = input(
             f"What normalization method do you want to use? ").lower()
     if response == 'm':
             normalized_matrix = min_max_normalization(decision_matrix, beneficial_criteria)   
     elif response == 'v':
             normalized_matrix = vector_normalization(decision_matrix, beneficial_criteria)
-    print(normalized_matrix)
+    elif response == 'n':
+            normalized_matrix = decision_matrix
+    #print(normalized_matrix)
     return normalized_matrix
 
 

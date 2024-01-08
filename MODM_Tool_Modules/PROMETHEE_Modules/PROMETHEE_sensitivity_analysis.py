@@ -253,24 +253,37 @@ def ridgelineplot_sensitivity_results(scores_df, user_input, directory):
     )
     plt.xlabel("Net Outranking Flow")
     if user_input == 'yes':
-        plt.savefig(os.path.join(directory, 'ridgeline_plot.png'), dpi=500)
+        plt.savefig(os.path.join(directory, 'PROMETHEE_ridgeline_plot.png'), dpi=500)
     plt.show()
 
 
 def top_ranked_percentage(ranks):
-    num_sets = len(ranks[1])
+    dimensions = ranks.shape 
+    num_sets = dimensions[0]
     top_ranked_percentage = {}
     for column in ranks.columns:
         counts = ranks[column].value_counts().get(1, 0)
         percentage = round((counts/num_sets)*100, 2)
         top_ranked_percentage[column] = percentage
-    filtered_top_rank_percentage = {key: value for key, value in top_ranked_percentage.items() if value >= 0.1}
-    filtered_top_serie = pd.Series(filtered_top_rank_percentage)
     top_serie = pd.Series(top_ranked_percentage)
+    filtered_top_serie = top_serie.nlargest(5)
     return filtered_top_serie, top_serie
 
 
-def plot_bar_chart_topsis(scores, user_input, directory):
+def top3_percentage(ranks):
+    dimensions = ranks.shape 
+    num_sets = dimensions[0]
+    top3_percentage = {}
+    for column in ranks.columns:
+        top3_counts = ranks[column].apply(lambda x: x in [1, 2, 3]).sum()
+        percentage = round((top3_counts/num_sets)*100, 2)
+        top3_percentage[column] = percentage
+    top3_serie = pd.Series(top3_percentage)
+    filtered_top3_serie = top3_serie.nlargest(5)
+    return filtered_top3_serie, top3_serie
+
+
+def plot_bar_chart_promethee_top1(scores, user_input, directory):
     # Sort scores for better visualization
     sorted_scores = scores.sort_values(ascending=False)
 
@@ -290,8 +303,8 @@ def plot_bar_chart_topsis(scores, user_input, directory):
     sm = ScalarMappable(cmap=plt.cm.cividis, norm=norm)
     sm.set_array([])
     plt.colorbar(sm, ax=barplot, orientation='vertical')
-    plt.title('Reliability Percentage for Alternatives')
-    plt.ylabel('Reliability Percentage (%)')
+    plt.title('Top 1 Percentage for Alternatives')
+    plt.ylabel('Top 1 Percentage (%)')
     plt.xlabel('Alternatives')
     plt.xticks(rotation=0)
     plt.grid(axis='y')
@@ -300,7 +313,43 @@ def plot_bar_chart_topsis(scores, user_input, directory):
         plt.savefig(
             os.path.join(
                 directory,
-                'top_ranked_percentage_barplot.png'),
+                'PROMETHEE_top1_%_barplot.png'),
+            dpi=500,
+            bbox_inches='tight')
+    plt.show()
+
+
+def plot_bar_chart_promethee_top3(scores, user_input, directory):
+    # Sort scores for better visualization
+    sorted_scores = scores.sort_values(ascending=False)
+
+    # Plot
+    df = sorted_scores.reset_index()
+    df.columns = ['Alternatives', 'Top Ranked Percentage']
+    order = df['Alternatives'].tolist()
+    norm = plt.Normalize(df['Top Ranked Percentage'].min(), df['Top Ranked Percentage'].max())
+    colors = plt.cm.cividis(norm(df['Top Ranked Percentage']))
+    barplot = sns.barplot(
+        x='Alternatives',
+        y='Top Ranked Percentage',
+        data=df,
+        palette=list(colors),
+        legend=False,
+        order=order)
+    sm = ScalarMappable(cmap=plt.cm.cividis, norm=norm)
+    sm.set_array([])
+    plt.colorbar(sm, ax=barplot, orientation='vertical')
+    plt.title('Top 3 Percentage for Alternatives')
+    plt.ylabel('Top 3 Percentage (%)')
+    plt.xlabel('Alternatives')
+    plt.xticks(rotation=0)
+    plt.grid(axis='y')
+    if user_input == 'yes':
+        plt.tight_layout()
+        plt.savefig(
+            os.path.join(
+                directory,
+                'PROMETHEE_top3_%_barplot.png'),
             dpi=500,
             bbox_inches='tight')
     plt.show()
@@ -308,20 +357,17 @@ def plot_bar_chart_topsis(scores, user_input, directory):
 
 def sensitivity_analysis(
         function,
-        initial_weights,
-        num_samples,
-        lower_limit,
-        upper_limit,
+        normalized_weight_sets,
         decision_matrix,
         normalized_matrix,
         user_input,
         directory,
         preference_functions):
-    normalized_weight_sets, num_sets, uncertainties = generate_weight_sets(
-        initial_weights, num_samples, lower_limit, upper_limit)
     scores_df, ranks_df = run_sensitivity_analysis(
         function, decision_matrix, normalized_weight_sets, normalized_matrix, preference_functions)
     ridgelineplot_sensitivity_results(scores_df, user_input, directory)
     filtered_top_serie, top_serie = top_ranked_percentage(ranks_df)
-    plot_bar_chart_topsis(filtered_top_serie, user_input, directory)
-    return uncertainties, scores_df, ranks_df, filtered_top_serie, top_serie
+    filtered_top3_serie, top3_serie = top3_percentage(ranks_df)
+    plot_bar_chart_promethee_top1(filtered_top_serie, user_input, directory)
+    plot_bar_chart_promethee_top3(filtered_top3_serie, user_input, directory)
+    return scores_df, ranks_df, filtered_top_serie, top_serie, filtered_top3_serie, top3_serie

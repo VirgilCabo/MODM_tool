@@ -28,8 +28,10 @@ pm_plot.results_visualization_promethee(
 user_input2 = input(
     "Do you want to run a sensitivity analysis? (yes/no): ").strip().lower()
 if user_input2 == 'yes':
-    uncertainties, net_flows_df, ranks_df, filtered_top_serie, top_serie = pm_sens.sensitivity_analysis(
-        pm_process.PROMETHEE_data_processing, weights, 10000, 0, 10, decision_matrix, normalized_matrix, user_input, directory, preference_functions)
+    normalized_weight_sets, num_sets, uncertainties = pm_sens.generate_weight_sets(
+        weights, 100000, 0, 10)
+    net_flows_df, ranks_df, filtered_top_serie, top_serie, filtered_top3_serie, top3_serie = pm_sens.sensitivity_analysis(
+        pm_process.PROMETHEE_data_processing, normalized_weight_sets, decision_matrix, normalized_matrix, user_input, directory, preference_functions)
 
 if user_input == 'yes':
     pm_save.save_run_results(
